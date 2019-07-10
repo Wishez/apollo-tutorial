@@ -1,4 +1,5 @@
 const { RESTDataSource } = require('apollo-datasource-rest')
+const get = require('lodash/get')
 
 class LaunchAPI extends RESTDataSource {
     constructor() {
@@ -23,7 +24,7 @@ class LaunchAPI extends RESTDataSource {
         return {
           id: launch.flight_number || 0,
           cursor: `${launch.launch_date_unix}`,
-          site: launch_site && launch_site.site_name,
+          site: get(launch_site, 'site_name', ''),
           mission: {
             name: launch.mission_name,
             missionPatchSmall: links.mission_patch_small,
@@ -37,7 +38,7 @@ class LaunchAPI extends RESTDataSource {
         };
     }
 
-    getLaunchByIds({ launchIds }) {
+    getLaunchesByIds({ launchIds }) {
         return Promise.all(
             launchIds.map(launchId => this.getLaunchById({ launchId }))
         )
